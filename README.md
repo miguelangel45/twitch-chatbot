@@ -1,5 +1,5 @@
 # twitch-chatbot
-This is the chatbot for [miguelangel_45's](www.twitch.tv/miguelangel_45) channel on twitch.tv
+This is the chatbot for [miguelangel_45's](https://www.twitch.tv/miguelangel_45) channel on twitch.tv
 
 ## ¡Attention!
 For use this chatbot you must have a google-texttospeech api available to use in your account in google cloud,
