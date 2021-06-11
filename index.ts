@@ -1,5 +1,7 @@
 import ClientConnection from './app/connection/connection';
 import {GreetingsEnum} from "./app/enums/greetings";
+import {CommandsEnum} from "./app/enums/commands";
+import {PremiumCommandsEnum} from "./app/enums/commands";
 import {Vips} from "./app/enums/vips";
 import ttsModule from "./app/tts/tts.module";
 
@@ -27,14 +29,6 @@ class chatbotTwitch{
     console.log(`--> Incoming target: ${target}`);
     console.log(`--> Incoming message: ${msg}`);
 
-    const commandName = msg.trim();
-
-    if (commandName === '!dice') {
-      const num = await chatbotTwitch.rollDice();
-      bot.clientConn.say(target, `You rolled a ${num}`);
-      console.log(`* Executed ${commandName} command`);
-    }
-
     chatbotTwitch.checkHello(msg.split(' ')[0].toLowerCase(), target, context, msg);
   }
 
@@ -56,17 +50,44 @@ class chatbotTwitch{
     }
   }
 
-  private static sayHello(greeting, target, context, msj){
+  private static sayHello(greeting, target: string, context: any, msj: string){
     if(Object.values(GreetingsEnum).includes(greeting.replace(/[^a-zA-Z ]/g, ""))){
       bot.clientConn.say(target, `¡Bienvenid@ ${context.username} KonCha!, Sigue que atrás hay lugar TehePelo, disfruta del stream `);
       tts.synthChatVoice(`¡Bienvenid@ ${context.username}!, Sigue que atrás hay lugar, disfruta del stream`);
+      chatbotTwitch.checkCommand(msj, context, target);
     } else {
-      tts.synthChatVoice(`${context.username} dice: ${msj.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
+      chatbotTwitch.checkCommand(msj, context, target);
+    }
+  }
+
+  public static checkCommand(word, context, target){
+    const command = word.split(' ')[0].toLowerCase();
+    console.log(context);
+    console.log(Object.keys(PremiumCommandsEnum).includes(command) || context.mod == true || context.username === process.env.CHANNELS);
+    if(Object.keys(PremiumCommandsEnum).includes(command) && (context.mod == true || context.username === process.env.CHANNELS)){
+      chatbotTwitch.launchCommand(word, target, context, true);
+    } else if(Object.keys(CommandsEnum).includes(command)){
+      chatbotTwitch.launchCommand(word, target, context);
+    } else {
+      tts.synthChatVoice(`${context.username} dice: ${word.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
     }
   }
   private static async rollDice() {
     const sides = 6;
     return Math.floor(Math.random() * sides) + 1;
+  }
+
+  public static launchCommand(word, target, context, privileged?){
+    const command = word.split(' ')[0].toLowerCase();
+    if(command.substr(-1) === '?'){
+      bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]));
+    } else {
+      if (word.split(' ')[1]){
+        bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]).replace('<sender>',context.username).replace('<user>', word.split(' ')[1].toLowerCase()));
+      } else {
+        bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command+'?']:CommandsEnum[command+'?']));
+      }
+    }
   }
 
 }
