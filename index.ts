@@ -4,6 +4,7 @@ import {CommandsEnum} from "./app/enums/commands";
 import {PremiumCommandsEnum} from "./app/enums/commands";
 import {Vips} from "./app/enums/vips";
 import ttsModule from "./app/tts/tts.module";
+import {Twitch_emotes} from "./app/enums/twitch_emotes";
 
 const bot = new ClientConnection;
 const tts = new ttsModule();
@@ -26,10 +27,11 @@ class chatbotTwitch{
       return;
     }
 
-    console.log(`--> Incoming target: ${target}`);
-    console.log(`--> Incoming message: ${msg}`);
-
-    chatbotTwitch.checkHello(msg.split(' ')[0].toLowerCase(), target, context, msg);
+    if(context['message-type'] == 'chat'){
+      console.log(`--> Incoming target: ${target}`);
+      console.log(`--> Incoming message: ${msg}`);
+      chatbotTwitch.checkHello(msg.split(' ')[0].toLowerCase(), target, context, msg);
+    }
   }
 
   onConnectedHandler = (addr, port) =>{
@@ -51,6 +53,7 @@ class chatbotTwitch{
   }
 
   private static sayHello(greeting, target: string, context: any, msj: string){
+
     if(Object.values(GreetingsEnum).includes(greeting.replace(/[^a-zA-Z ]/g, ""))){
       bot.clientConn.say(target, `¡Bienvenid@ ${context.username} KonCha!, Sigue que atrás hay lugar TehePelo, disfruta del stream `);
       tts.synthChatVoice(`¡Bienvenid@ ${context.username}!, Sigue que atrás hay lugar, disfruta del stream`);
@@ -60,7 +63,7 @@ class chatbotTwitch{
     }
   }
 
-  public static checkCommand(word, context, target){
+  public static async checkCommand(word, context, target){
     const command = word.split(' ')[0].toLowerCase();
     console.log(context);
     console.log(Object.keys(PremiumCommandsEnum).includes(command) || context.mod == true || context.username === process.env.CHANNELS);
@@ -69,12 +72,17 @@ class chatbotTwitch{
     } else if(Object.keys(CommandsEnum).includes(command)){
       chatbotTwitch.launchCommand(word, target, context);
     } else {
-      tts.synthChatVoice(`${context.username} dice: ${word.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
+      const messageArr = word.split(' ');
+      await messageArr.forEach((word, key) => {
+        if(Twitch_emotes[word]){
+          delete messageArr[key];
+        }
+      })
+      word = await messageArr.toString();
+      if(!context['emote-only']){
+        await tts.synthChatVoice(`${context.username} dice: ${word.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
+      }
     }
-  }
-  private static async rollDice() {
-    const sides = 6;
-    return Math.floor(Math.random() * sides) + 1;
   }
 
   public static launchCommand(word, target, context, privileged?){

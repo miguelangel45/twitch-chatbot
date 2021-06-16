@@ -11,19 +11,23 @@ class ttsModule{
   }
 
   public async synthChatVoice(message){
-    let req = {
-      input: {text: message},
-      voice: {languageCode: 'es-US', ssmlGender: 'FEMALE'},
-      audioConfig: {
-        audioEncoding: 'MP3',
-      }
-    };
+    try{
+      let req = {
+        input: {text: message},
+        voice: {languageCode: 'es-US', ssmlGender: 'FEMALE'},
+        audioConfig: {
+          audioEncoding: 'MP3',
+        }
+      };
 
-    const [response] = await this.client.synthesizeSpeech(req);
-    const writeFile = util.promisify(fs.writeFile);
-    await writeFile(`${process.env.PWD}/messages/test.mp3`, response.audioContent, 'binary');
-    console.log(`Audio content written to file: ${process.env.PWD}/messages`);
-    this.playAudio();
+      const [response] = await this.client.synthesizeSpeech(req);
+      const writeFile = util.promisify(fs.writeFile);
+      await writeFile(`${process.env.PWD}/messages/test.mp3`, response.audioContent, 'binary');
+      console.log(`Audio content written to file: ${process.env.PWD}/messages`);
+      this.playAudio();
+    } catch (e){
+      console.log('error in synthChatVoice',e);
+    }
   }
 
   public playAudio(){

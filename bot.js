@@ -55,7 +55,7 @@ function onConnectedHandler(addr, port) {
 }
 
 
-var play = require('play');
+/*var play = require('play');
 
 // play with a callback
 play.sound('./wavs/sfx/intro.wav', function(){
@@ -77,4 +77,4 @@ play.sound('./wavs/sfx/ding.wav');
 //If you want to know if this can't play for some reason
 play.on('error', function () {
   console.log('I can\'t play!');
-});
+});*/
