@@ -78,7 +78,7 @@ class chatbotTwitch{
           delete messageArr[key];
         }
       })
-      word = await messageArr.toString();
+      word = await messageArr.join(" ");
       if(!context['emote-only']){
         await tts.synthChatVoice(`${context.username} dice: ${word.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
       }
