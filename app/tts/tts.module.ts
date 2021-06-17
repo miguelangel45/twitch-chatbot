@@ -50,6 +50,7 @@ class ttsModule{
       audio.played = true;
     }).then(() =>{
       console.log('played');
+      fs.unlinkSync(audio.audio);
     });
   }
 }
