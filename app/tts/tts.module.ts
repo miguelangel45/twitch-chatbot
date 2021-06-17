@@ -6,7 +6,7 @@ import {of} from 'rxjs';
 const mp3Duration = require('mp3-duration');
 
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS = './pure-advantage-316317-ddb75fa94648.json';
+//process.env.GOOGLE_APPLICATION_CREDENTIALS = '';
 class ttsModule{
   private client = new textToSpeech.TextToSpeechClient();
   private list;
