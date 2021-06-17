@@ -91,7 +91,7 @@ class chatbotTwitch{
       bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]));
     } else {
       if (word.split(' ')[1]){
-        bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]).replace('<sender>',context.username).replace('<user>', word.split(' ')[1].toLowerCase()));
+        bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]).replace('<sender>',context.username).replace('<user>', word.split(' ')[1].toLowerCase().replace('@','')));
       } else {
         bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command+'?']:CommandsEnum[command+'?']));
       }
