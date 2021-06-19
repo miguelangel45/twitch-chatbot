@@ -3,5 +3,6 @@ export enum GreetingsEnum {
   Hi = 'hi',
   Hello = 'hello',
   Buenas = 'buenas',
-  Wenas = 'wenas'
+  Wenas = 'wenas',
+  Buenardas = 'buenardas'
 }

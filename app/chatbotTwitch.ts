@@ -65,8 +65,6 @@ export class ChatbotTwitch{
 
   public static async checkCommand(word, context, target){
     const command = word.split(' ')[0].toLowerCase();
-    console.log(context);
-    console.log(Object.keys(PremiumCommandsEnum).includes(command) || context.mod == true || context.username === process.env.CHANNELS);
     if(Object.keys(PremiumCommandsEnum).includes(command) && (context.mod == true || context.username === process.env.CHANNELS)){
       ChatbotTwitch.launchCommand(word, target, context, true);
     } else if(Object.keys(CommandsEnum).includes(command)){
@@ -79,7 +77,7 @@ export class ChatbotTwitch{
         }
       })
       word = await messageArr.join(" ");
-      if(!context['emote-only']){
+      if(!context['emote-only'] && !Object.values(GreetingsEnum).includes(command.replace(/[^a-zA-Z ]/g, ""))){
         await tts.synthChatVoice(`${context.username} dice: ${word.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ' [Enlace oculto] ')}`);
       }
     }
