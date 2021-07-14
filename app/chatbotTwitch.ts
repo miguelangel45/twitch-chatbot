@@ -13,7 +13,6 @@ export class ChatbotTwitch{
   constructor() {
     try {
       bot.clientConn.connect();
-
       bot.clientConn.on('message', this.onMessageHandler);
       bot.clientConn.on('connected', this.onConnectedHandler);
 
@@ -66,9 +65,9 @@ export class ChatbotTwitch{
   public static async checkCommand(word, context, target){
     const command = word.split(' ')[0].toLowerCase();
     if(Object.keys(PremiumCommandsEnum).includes(command) && (context.mod == true || context.username === process.env.CHANNELS)){
-      ChatbotTwitch.launchCommand(word, target, context, true);
+      this.launchCommand(word, target, context, true);
     } else if(Object.keys(CommandsEnum).includes(command)){
-      ChatbotTwitch.launchCommand(word, target, context);
+      this.launchCommand(word, target, context);
     } else {
       const messageArr = word.split(' ');
       await messageArr.forEach((word, key) => {
@@ -83,7 +82,7 @@ export class ChatbotTwitch{
     }
   }
 
-  public static launchCommand(word, target, context, privileged?){
+  private static launchCommand(word, target, context, privileged?: boolean) {
     const command = word.split(' ')[0].toLowerCase();
     if(command.substr(-1) === '?'){
       bot.clientConn.say(target, ((privileged)?PremiumCommandsEnum[command]:CommandsEnum[command]));
@@ -95,5 +94,4 @@ export class ChatbotTwitch{
       }
     }
   }
-
 }
